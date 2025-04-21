@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Recorrido en Coche - Campeche</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f8f8f8;
+    }
+
+    header {
+      background-color: #8B0000;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      position: relative;
+    }
+
+    .logo {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      height: 50px;
+      width: auto;
+      transition: all 0.3s ease;
+    }
+
+    @media screen and (max-width: 768px) {
+      .logo {
+        height: 40px;
+        top: 5px;
+        left: 5px;
+      }
+
+      header h1 {
+        font-size: 1.5em;
+        padding: 10px 0;
+      }
+    }
+
+    #map {
+      height: 500px;
+      width: 90%;
+      max-width: 1200px;
+      margin: 20px auto;
+      border-radius: 15px;
+      box-shadow: 0 0 15px #00000022;
+    }
+
+    #distance,
+    #description {
+      text-align: center;
+      margin-top: 10px;
+      font-size: 1.2em;
+      font-weight: bold;
+    }
+
+    #description {
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+
+    .btn-red-vino {
+      background-color: #8B0000;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      transition: background 0.3s;
+      padding: 6px 12px;
+      border-radius: 8px;
+      margin: 2px;
+    }
+
+    .btn-red-vino:hover {
+      background-color: #a30000;
+    }
+
+    .lang-switch {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 10px;
+      margin-bottom: 10px;
+    }
+
+    .popup-btn {
+      display: inline-block;
+      margin-top: 10px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .btn-back {
+      background-color: #8B0000;
+      color: #fff;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.2em;
+      cursor: pointer;
+      margin-top: 20px;
+      margin-bottom: 40px;
+      transition: background-color 0.3s;
+    }
+
+    .btn-back:hover {
+      background-color: #a30000;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="img/logo.png" alt="Logo" class="logo">
+    <h1>Recorrido en Coche por Campeche</h1>
+    <div class="lang-switch">
+      <button id="btnEs" class="btn-red-vino">🇲🇽 Español</button>
+      <button id="btnEn" class="btn-red-vino">🇺🇸 English</button>
+    </div>
+  </header>
+
+  <div id="description">
+    <p>Bienvenido al recorrido en coche por la ciudad de Campeche. Explora lugares históricos y hermosos paisajes. Recorrerás sitios emblemáticos de la ciudad y conocerás su rica historia. Asegúrate de disfrutar cada momento mientras avanzas en el recorrido. ¡Comencemos!</p>
+  </div>
+
+  <div id="distance">Distancia al destino: -</div>
+
+  <div style="text-align: center; margin-top: 10px;">
+    <button id="startRouteBtn" class="btn-red-vino">🚗 Iniciar Recorrido</button>
+  </div>
+
+  <div id="map"></div>
+
+  <div style="text-align: center;">
+    <a href="inicio.html">
+      <button class="btn-back">Regresar al Inicio</button>
+    </a>
+  </div>
+
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script>
+    const map = L.map('map').setView([19.845, -90.523], 12);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    const translations = {
+      es: {
+  
+          welcome: 'Bienvenido al recorrido en auto por la ciudad de Campeche. Explora lugares históricos y paisajes hermosos. Visitarás sitios emblemáticos de la ciudad y conocerás su rica historia. Asegúrate de disfrutar cada momento mientras avanzas en el recorrido. ¡Comencemos!',
+          distance: 'Distancia al destino',
+          'Vapor Lolá': {
+            description: 'Es un ejemplo de transformación de barcos durante la Revolución Industrial (siglo XIX). Este barco de vapor fue utilizado para el comercio y transporte en la región, convirtiéndose en un ícono de la ingeniería naval local. Hoy en día, sigue siendo un símbolo de la historia marítima de Campeche.'
+          },
+          'Batería de San Luis': {
+            description: 'Antiguo fuerte utilizado en la defensa de la ciudad. Ubicado estratégicamente, protegía la entrada al puerto y participó en múltiples acciones militares durante la época colonial.'
+          },
+          'Fuerte de San Miguel': {
+            description: 'Fuerte histórico que protegía la bahía de Campeche. Servía como punto de vigilancia y defensa contra los ataques de piratas en los siglos XVII y XVIII. En su interior actualmente se encuentra un museo arqueológico.'
+          },
+          'Parque de Lerma': {
+            description: 'Parque natural con vistas panorámicas de la ciudad. Ofrece áreas verdes, zonas de descanso y senderos para caminar ideales para pasar el rato en familia o con amigos.'
+          },
+          'Playa Bonita': {
+            description: 'Playa tranquila ideal para descansar y reflexionar. Sus aguas calmadas y arena limpia la hacen un destino favorito para locales y turistas.'
+          }
+        
+        
+      },
+      'en': {
+  welcome: 'Welcome to the car tour through the city of Campeche. Explore historical places and beautiful landscapes. You will visit emblematic sites of the city and learn about its rich history. Be sure to enjoy every moment as you progress through the tour. Let’s get started!',
+  distance: 'Distance to destination',
+  'Vapor Lolá': {
+    description: 'It is an example of ship transformation during the Industrial Revolution (19th century). This steamship was used for trade and transport in the region, becoming an icon of local naval engineering. Today it remains a symbol of Campeche\'s maritime history.'
+  },
+  'Batería de San Luis': {
+    description: 'Old fort used in the defense of the city. Located strategically, it protected the entrance to the port and participated in multiple military actions during the colonial era.'
+  },
+  'Fuerte de San Miguel': {
+    description: 'Historic fort that protected the bay of Campeche. It served as a lookout and defense point against pirate attacks in the 17th and 18th centuries. Inside, it currently houses an archaeological museum.'
+  },
+  'Parque de Lerma': {
+    description: 'A natural park with panoramic views of the city. It offers green areas, rest zones, and walking trails ideal for spending time with family or friends.'
+  },
+  'Playa Bonita': {
+    description: 'A quiet beach ideal for rest and reflection. Its calm waters and clean sand make it a favorite destination for locals and tourists alike.'
+  }
+}
+
+    };
+
+    let currentLang = 'es';
+
+    const sites = [
+      { lat: 19.8341388, lng: -90.5564829, name: 'Vapor Lolá', image: 'img/VaporLola.jpg' },
+      { lat: 19.825526, lng: -90.57013, name: 'Batería de San Luis', image: 'img/bateria-de-san-luis.webp' },
+      { lat: 19.824654, lng: -90.56867, name: 'Fuerte de San Miguel', image: 'img/fuerteSanMiguel.jpg' },
+      { lat: 19.805915, lng: -90.600995, name: 'Parque de Lerma', image: 'img/parqueLerma.jpg' },
+      { lat: 19.7932242, lng: -90.6240417, name: 'Playa Bonita', image: 'img/playaBonita.jpg' }
+    ];
+
+    function createPopup(site) {
+      const desc = translations[currentLang][site.name].description;
+      return `
+        <h3>${site.name}</h3>
+        <img src="${site.image}" alt="${site.name}">
+        <p>${desc}</p>
+        <div class="popup-btn">
+          <button onclick="speak('${desc.replace(/'/g, "\\'")}')" class="btn-red-vino">🔊 Escuchar</button>
+        </div>
+      `;
+    }
+
+    const markers = [];
+    sites.forEach(site => {
+      const marker = L.marker([site.lat, site.lng]).addTo(map).bindPopup(createPopup(site));
+      markers.push({ marker, site });
+    });
+
+    function getOSRMRoute(sites) {
+      const coordinates = sites.map(site => `${site.lng},${site.lat}`).join(';');
+      const url = `https://router.project-osrm.org/route/v1/driving/${coordinates}?overview=full&geometries=geojson`;
+
+      fetch(url)
+        .then(res => res.json())
+        .then(data => {
+          const coords = data.routes[0].geometry.coordinates.map(c => [c[1], c[0]]);
+          L.polyline(coords, { color: 'blue', weight: 4 }).addTo(map);
+        })
+        .catch(err => console.error('Error al trazar ruta:', err));
+    }
+
+    getOSRMRoute(sites);
+
+    let userMarker;
+    let routeToStartLine;
+
+    if (navigator.geolocation) {
+      navigator.geolocation.watchPosition(onLocationFound, onLocationError, {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0
+      });
+    } else {
+      alert('La geolocalización no está disponible en este dispositivo.');
+    }
+
+    function onLocationFound(position) {
+      const userLocation = L.latLng(position.coords.latitude, position.coords.longitude);
+
+      if (!userMarker) {
+        userMarker = L.marker(userLocation).addTo(map).bindPopup('Tu ubicación').openPopup();
+      } else {
+        userMarker.setLatLng(userLocation);
+      }
+
+      map.setView(userLocation, 15);
+
+      const nearest = sites.reduce((a, b) => {
+        const d1 = userLocation.distanceTo([a.lat, a.lng]);
+        const d2 = userLocation.distanceTo([b.lat, b.lng]);
+        return d1 < d2 ? a : b;
+      });
+
+      const dist = (userLocation.distanceTo([nearest.lat, nearest.lng]) / 1000).toFixed(2);
+      document.getElementById('distance').innerText = `${translations[currentLang].distance}: ${dist} km`;
+    }
+
+    function onLocationError(e) {
+      alert('No se pudo obtener tu ubicación. Asegúrate de haber dado permiso.');
+      console.error(e.message);
+    }
+
+    document.getElementById('btnEs').addEventListener('click', () => {
+      currentLang = 'es';
+      updateUI();
+    });
+
+    document.getElementById('btnEn').addEventListener('click', () => {
+      currentLang = 'en';
+      updateUI();
+    });
+
+    function updateUI() {
+      document.querySelector('#description p').innerText = translations[currentLang].welcome;
+      markers.forEach(({ marker, site }) => {
+        marker.setPopupContent(createPopup(site));
+      });
+    }
+
+    function speak(text) {
+      const synth = window.speechSynthesis;
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = currentLang === 'es' ? 'es-MX' : 'en-US';
+      synth.cancel();
+      synth.speak(utter);
+    }
+
+    document.getElementById('startRouteBtn').addEventListener('click', () => {
+      if (!userMarker) {
+        alert('Ubicación del usuario no disponible.');
+        return;
+      }
+
+      const userLocation = userMarker.getLatLng();
+      const nearest = sites.reduce((a, b) => {
+        const d1 = userLocation.distanceTo([a.lat, a.lng]);
+        const d2 = userLocation.distanceTo([b.lat, b.lng]);
+        return d1 < d2 ? a : b;
+      });
+
+      const start = `${userLocation.lng},${userLocation.lat}`;
+      const end = `${nearest.lng},${nearest.lat}`;
+      const url = `https://router.project-osrm.org/route/v1/driving/${start};${end}?overview=full&geometries=geojson`;
+
+      fetch(url)
+        .then(res => res.json())
+        .then(data => {
+          const coords = data.routes[0].geometry.coordinates.map(c => [c[1], c[0]]);
+          if (routeToStartLine) map.removeLayer(routeToStartLine);
+          routeToStartLine = L.polyline(coords, {
+            color: 'green',
+            weight: 5,
+            dashArray: '10,5'
+          }).addTo(map);
+          map.fitBounds(routeToStartLine.getBounds());
+        })
+        .catch(err => {
+          console.error('Error al trazar ruta:', err);
+          alert('No se pudo trazar la ruta al punto más cercano.');
+        });
+    });
+  </script>
+</body>
+</html>

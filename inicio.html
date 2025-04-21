@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Página de Inicio - Campeche</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f8f8f8;
+      margin: 0;
+      text-align: center;
+    }
+
+    header {
+      background-color: #8B0000;
+      color: white;
+      padding: 10px;
+      position: relative;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 20px;
+    }
+
+    .logo {
+      height: 90px;
+      max-width: 80%;
+      width: auto;
+      transition: all 0.3s ease;
+    }
+
+    /* Estilo para el selector de idioma con botones */
+    #language-selector {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+    }
+
+    .lang-btn {
+      background-color: white;
+      color: #333;
+      border-radius: 5px;
+      padding: 8px 15px;
+      font-size: 1em;
+      cursor: pointer;
+      border: 2px solid #8B0000;
+      transition: all 0.3s ease;
+    }
+
+    .lang-btn:hover {
+      background-color: #8B0000;
+      color: white;
+    }
+
+    .active {
+      background-color: #8B0000;
+      color: white;
+    }
+
+    #main-content {
+      margin-top: 40px;
+      padding: 20px;
+    }
+
+    #main-content img {
+      max-width: 80%;
+      height: auto;
+      border-radius: 15px;
+      margin-bottom: 20px;
+    }
+
+    #main-content h2 {
+      font-size: 2em;
+      color: #333;
+    }
+
+    .btn-go-to-index {
+      background-color: #8B0000;
+      color: white;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1.2em;
+      transition: background-color 0.3s ease;
+      margin-top: 20px;
+      display: inline-block;
+    }
+
+    .btn-go-to-index:hover {
+      background-color: #a30000;
+    }
+
+    footer {
+      margin-top: 400px;
+      background-color: #8B0000;
+      color: white;
+      padding: 10px;
+      position: fixed;
+      width: 100%;
+      bottom: 0;
+    }
+
+    /* Media queries para dispositivos pequeños */
+    @media (max-width: 600px) {
+      header {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .logo {
+        height: 70px;
+        margin-bottom: 10px;
+      }
+
+      #language-selector {
+        margin-top: 10px;
+      }
+
+      .lang-btn {
+        font-size: 0.9em;
+        padding: 6px 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="img/logo.png" alt="Logo" class="logo">
+    <h1 id="title">Bienvenido a Campeche</h1>
+    <div id="language-selector">
+      <button class="lang-btn" id="btn-es" onclick="changeLanguage('es')">Español</button>
+      <button class="lang-btn" id="btn-en" onclick="changeLanguage('en')">English</button>
+    </div>
+  </header>
+
+  <div id="main-content">
+    <img src="img/fondo.jpeg" alt="Imagen de Campeche">
+    <h2 id="subtitle">Explora los lugares más emblemáticos de Campeche</h2>
+    <p id="description">
+      Sumérgete en la historia y belleza de esta maravillosa ciudad, conocida por su arquitectura colonial y hermosos paisajes. La Subdirección de Arqueología Subacuática del Instituto Nacional de Antropología e Historia tiene como objetivo central realizar proyectos de investigación para localizar y ubicar espacial y temporalmente los sitios arqueológicos e históricos sumergidos.
+    </p>
+
+    <a href="index3.html">
+      <button class="btn-go-to-index" id="button-text">Ir al Recorrido</button>
+    </a>
+  </div>
+
+
+
+  <script>
+    const translations = {
+      es: {
+        title: "Bienvenido a Campeche",
+        subtitle: "Explora los lugares más emblemáticos de Campeche",
+        description: "Sumérgete en la historia y belleza de esta maravillosa ciudad, conocida por su arquitectura colonial y hermosos paisajes. La Subdirección de Arqueología Subacuática del Instituto Nacional de Antropología e Historia tiene como objetivo central realizar proyectos de investigación para localizar y ubicar espacial y temporalmente los sitios arqueológicos e históricos sumergidos.",
+        button: "Ir al Recorrido"
+      },
+      en: {
+        title: "Welcome to Campeche",
+        subtitle: "Explore Campeche’s most iconic landmarks",
+        description: "Immerse yourself in the history and beauty of this wonderful city, known for its colonial architecture and stunning landscapes. The Subdirectorate of Underwater Archaeology of the National Institute of Anthropology and History aims to conduct research projects to spatially and temporally locate submerged archaeological and historical sites.",
+        button: "Start the Tour"
+      }
+    };
+
+    const langBtns = document.querySelectorAll('.lang-btn');
+    const title = document.getElementById("title");
+    const subtitle = document.getElementById("subtitle");
+    const description = document.getElementById("description");
+    const buttonText = document.getElementById("button-text");
+
+    function changeLanguage(lang) {
+      // Change the language
+      title.textContent = translations[lang].title;
+      subtitle.textContent = translations[lang].subtitle;
+      description.textContent = translations[lang].description;
+      buttonText.textContent = translations[lang].button;
+
+      // Highlight the active button
+      langBtns.forEach(btn => btn.classList.remove('active'));
+      document.getElementById(`btn-${lang}`).classList.add('active');
+    }
+
+    // Set default language as Spanish
+    changeLanguage('es');
+  </script>
+</body>
+</html>
